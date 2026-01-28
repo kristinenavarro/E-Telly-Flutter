@@ -22,17 +22,42 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   bool _urgent = false;
   String _notes = '';
   bool _showModal = false;
-  
+
   final List<MyRequest> _myRequests = [];
   final ScrollController _scrollController = ScrollController();
 
   // Bottom Navigation Items - SAME AS HOMESCREEN
   final List<Map<String, dynamic>> bottomNavItems = [
-    {'id': 'home', 'label': 'Home', 'icon': Icons.home_outlined, 'iconActive': Icons.home},
-    {'id': 'safety', 'label': 'Safety Tips', 'icon': Icons.security_outlined, 'iconActive': Icons.security},
-    {'id': 'evac', 'label': 'Evac Map', 'icon': Icons.map_outlined, 'iconActive': Icons.map},
-    {'id': 'resources', 'label': 'Resources', 'icon': Icons.inventory_outlined, 'iconActive': Icons.inventory},
-    {'id': 'profile', 'label': 'Profile', 'icon': Icons.person_outline, 'iconActive': Icons.person},
+    {
+      'id': 'home',
+      'label': 'Home',
+      'icon': Icons.home_outlined,
+      'iconActive': Icons.home
+    },
+    {
+      'id': 'safety',
+      'label': 'Safety Tips',
+      'icon': Icons.security_outlined,
+      'iconActive': Icons.security
+    },
+    {
+      'id': 'evac',
+      'label': 'Evac Map',
+      'icon': Icons.map_outlined,
+      'iconActive': Icons.map
+    },
+    {
+      'id': 'resources',
+      'label': 'Resources',
+      'icon': Icons.inventory_outlined,
+      'iconActive': Icons.inventory
+    },
+    {
+      'id': 'profile',
+      'label': 'Profile',
+      'icon': Icons.person_outline,
+      'iconActive': Icons.person
+    },
   ];
 
   // Navigation methods - SAME AS HOMESCREEN
@@ -44,11 +69,11 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     setState(() {
       _activeScreen = id;
     });
-    
+
     if (widget.onTabSelected != null) {
       widget.onTabSelected!(id);
     }
-    
+
     switch (id) {
       case 'home':
         // FIXED: Navigate to home screen instead of welcome screen
@@ -79,7 +104,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFDC2626).withOpacity(0.1) : Colors.transparent,
+            color: isActive
+                ? const Color(0xFFDC2626).withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(5),
           ),
           child: Column(
@@ -88,7 +115,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
               Icon(
                 isActive ? item['iconActive'] : item['icon'],
                 size: 20,
-                color: isActive ? const Color(0xFFDC2626) : const Color(0xFF666666),
+                color: isActive
+                    ? const Color(0xFFDC2626)
+                    : const Color(0xFF666666),
               ),
               const SizedBox(height: 2),
               Text(
@@ -96,7 +125,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
-                  color: isActive ? const Color(0xFFDC2626) : const Color(0xFF666666),
+                  color: isActive
+                      ? const Color(0xFFDC2626)
+                      : const Color(0xFF666666),
                 ),
               ),
             ],
@@ -226,7 +257,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       id: '3',
       name: 'Emergency Clothes Set',
       category: 'clothes',
-      description: 'Complete set of emergency clothing (shirt, pants, underwear)',
+      description:
+          'Complete set of emergency clothing (shirt, pants, underwear)',
       icon: Icons.checkroom,
       available: true,
       estimatedDelivery: 'Within 2-3 hours',
@@ -276,7 +308,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       id: '8',
       name: 'Advanced First Aid Kit',
       category: 'kit',
-      description: 'Complete medical supplies including bandages, antiseptics, medicines',
+      description:
+          'Complete medical supplies including bandages, antiseptics, medicines',
       icon: Icons.medical_information,
       available: true,
       estimatedDelivery: 'Within 2-3 hours',
@@ -433,8 +466,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     _showAlert(
       'Donation Submitted!',
       'Thank you for your generous donation of $qty ${resource.name}${qty > 1 ? 's' : ''}!\n\n'
-      'DRRMO will contact you for pickup arrangements.\n'
-      '${_urgent ? '🚨 URGENT DONATION - Priority pickup' : ''}',
+          'DRRMO will contact you for pickup arrangements.\n'
+          '${_urgent ? '🚨 URGENT DONATION - Priority pickup' : ''}',
       onOk: () {
         setState(() {
           _showModal = false;
@@ -468,7 +501,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     }
 
     if (!resource.available) {
-      _showAlert('Not Available', 'Sorry, ${resource.name} is currently out of stock.');
+      _showAlert('Not Available',
+          'Sorry, ${resource.name} is currently out of stock.');
       return;
     }
 
@@ -490,8 +524,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     _showAlert(
       'Request Submitted!',
       'Your request for $qty ${resource.name}${qty > 1 ? 's' : ''} has been submitted.\n\n'
-      'Estimated delivery: ${resource.estimatedDelivery}\n'
-      '${_urgent ? '🚨 URGENT REQUEST - Priority handling' : ''}',
+          'Estimated delivery: ${resource.estimatedDelivery}\n'
+          '${_urgent ? '🚨 URGENT REQUEST - Priority handling' : ''}',
       onOk: () {
         setState(() {
           _showModal = false;
@@ -564,10 +598,12 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
 
   ResourceItem? _getSelectedResourceDetails() {
     if (_selectedResource == null) return null;
-    
+
     return _activeTab == 'donate'
-        ? _donatableItems.firstWhere((r) => r.id == _selectedResource, orElse: () => _donatableItems[0])
-        : _requestableItems.firstWhere((r) => r.id == _selectedResource, orElse: () => _requestableItems[0]);
+        ? _donatableItems.firstWhere((r) => r.id == _selectedResource,
+            orElse: () => _donatableItems[0])
+        : _requestableItems.firstWhere((r) => r.id == _selectedResource,
+            orElse: () => _requestableItems[0]);
   }
 
   String _formatDateTime(DateTime date) {
@@ -593,7 +629,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     );
   }
 
-  void _showConfirmDialog(String title, String message, {required VoidCallback onConfirm}) {
+  void _showConfirmDialog(String title, String message,
+      {required VoidCallback onConfirm}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -657,7 +694,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     child: Icon(item.icon, size: 24, color: Colors.white),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -701,19 +739,22 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
               ),
               const SizedBox(height: 12),
               // Footer with Category and Info
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 6,
                 children: [
                   // Category Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF3F4F6),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Row(
                       children: [
-                        Icon(_getCategoryIcon(item.category), size: 12, color: color),
+                        Icon(_getCategoryIcon(item.category),
+                            size: 12, color: color),
                         const SizedBox(width: 2),
                         Text(
                           _getCategoryName(item.category),
@@ -814,7 +855,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                   ),
                   const SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: color,
                       borderRadius: BorderRadius.circular(6),
@@ -839,9 +881,11 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
 
   Widget _buildMyRequestCard(MyRequest request) {
     final resource = request.type == 'donation'
-        ? _donatableItems.firstWhere((r) => r.id == request.resourceId, orElse: () => _donatableItems[0])
-        : _requestableItems.firstWhere((r) => r.id == request.resourceId, orElse: () => _requestableItems[0]);
-    
+        ? _donatableItems.firstWhere((r) => r.id == request.resourceId,
+            orElse: () => _donatableItems[0])
+        : _requestableItems.firstWhere((r) => r.id == request.resourceId,
+            orElse: () => _requestableItems[0]);
+
     final color = request.type == 'donation'
         ? _getDonateCategoryColor(resource.category)
         : _getRequestCategoryColor(resource.category);
@@ -879,7 +923,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     children: [
                       // Type Badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
@@ -888,13 +933,17 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              request.type == 'donation' ? Icons.favorite : Icons.inventory,
+                              request.type == 'donation'
+                                  ? Icons.favorite
+                                  : Icons.inventory,
                               size: 12,
                               color: color,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              request.type == 'donation' ? 'DONATION' : 'REQUEST',
+                              request.type == 'donation'
+                                  ? 'DONATION'
+                                  : 'REQUEST',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -928,7 +977,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: statusColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
@@ -949,7 +999,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 ),
                 if (request.urgent)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFDC2626),
                       borderRadius: BorderRadius.circular(4),
@@ -957,7 +1008,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.warning, size: 12, color: Colors.white),
+                        const Icon(Icons.warning,
+                            size: 12, color: Colors.white),
                         const SizedBox(width: 4),
                         const Text(
                           'URGENT',
@@ -985,18 +1037,28 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                   // ID and Date
                   Row(
                     children: [
-                      const Text('ID:', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                      const Text('ID:',
+                          style: TextStyle(
+                              fontSize: 12, color: Color(0xFF6B7280))),
                       const SizedBox(width: 8),
                       Text(
                         request.id.substring(request.id.length - 6),
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF1F2937), fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF1F2937),
+                            fontWeight: FontWeight.w500),
                       ),
                       const Spacer(),
-                      const Text('Date:', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                      const Text('Date:',
+                          style: TextStyle(
+                              fontSize: 12, color: Color(0xFF6B7280))),
                       const SizedBox(width: 8),
                       Text(
                         request.date,
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF1F2937), fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF1F2937),
+                            fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -1006,11 +1068,14 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     children: [
                       Text(
                         '${request.type == 'donation' ? 'Pickup:' : 'Delivery:'}',
-                        style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+                        style: const TextStyle(
+                            fontSize: 12, color: Color(0xFF6B7280)),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        request.type == 'donation' ? 'Within 24 hours' : resource.estimatedDelivery ?? '',
+                        request.type == 'donation'
+                            ? 'Within 24 hours'
+                            : resource.estimatedDelivery ?? '',
                         style: TextStyle(
                           fontSize: 12,
                           color: color,
@@ -1025,7 +1090,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Notes:', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                        const Text('Notes:',
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xFF6B7280))),
                         const SizedBox(height: 4),
                         Text(
                           request.notes,
@@ -1064,8 +1131,11 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     ),
                     icon: const Icon(Icons.location_on, size: 16),
                     label: Text(
-                      request.type == 'donation' ? 'Track Pickup' : 'Track Delivery',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      request.type == 'donation'
+                          ? 'Track Pickup'
+                          : 'Track Delivery',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1075,7 +1145,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     onPressed: () => _handleCancelRequest(request.id),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFDC2626),
-                      side: BorderSide(color: const Color(0xFFDC2626).withOpacity(0.3)),
+                      side: BorderSide(
+                          color: const Color(0xFFDC2626).withOpacity(0.3)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -1083,7 +1154,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     icon: const Icon(Icons.close, size: 16),
                     label: const Text(
                       'Cancel',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1117,7 +1189,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
             children: [
               // Modal Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: const BoxDecoration(
                   border: Border(bottom: BorderSide(color: Color(0xFFE5E7EB))),
                 ),
@@ -1134,7 +1207,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                     ),
                     IconButton(
                       onPressed: () => setState(() => _showModal = false),
-                      icon: const Icon(Icons.close, size: 24, color: Color(0xFF666666)),
+                      icon: const Icon(Icons.close,
+                          size: 24, color: Color(0xFF666666)),
                     ),
                   ],
                 ),
@@ -1158,7 +1232,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                               color: color,
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Icon(resource.icon, size: 32, color: Colors.white),
+                            child: Icon(resource.icon,
+                                size: 32, color: Colors.white),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -1224,23 +1299,27 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                             onPressed: () {
                               final qty = int.tryParse(_quantity) ?? 1;
                               if (qty > 1) {
-                                setState(() => _quantity = (qty - 1).toString());
+                                setState(
+                                    () => _quantity = (qty - 1).toString());
                               }
                             },
                             icon: Container(
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                border: Border.all(color: const Color(0xFFD1D5DB)),
+                                border:
+                                    Border.all(color: const Color(0xFFD1D5DB)),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(Icons.remove, color: Color(0xFF1F2937)),
+                              child: const Icon(Icons.remove,
+                                  color: Color(0xFF1F2937)),
                             ),
                           ),
                           Expanded(
                             child: TextField(
                               controller: TextEditingController(text: _quantity)
-                                ..selection = TextSelection.collapsed(offset: _quantity.length),
+                                ..selection = TextSelection.collapsed(
+                                    offset: _quantity.length),
                               onChanged: (text) {
                                 final num = int.tryParse(text);
                                 if (num != null && num >= 1 && num <= 50) {
@@ -1259,17 +1338,21 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFD1D5DB)),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFD1D5DB)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: color, width: 2),
+                                  borderSide:
+                                      BorderSide(color: color, width: 2),
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
                               ),
                             ),
                           ),
@@ -1277,17 +1360,20 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                             onPressed: () {
                               final qty = int.tryParse(_quantity) ?? 1;
                               if (qty < 50) {
-                                setState(() => _quantity = (qty + 1).toString());
+                                setState(
+                                    () => _quantity = (qty + 1).toString());
                               }
                             },
                             icon: Container(
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                border: Border.all(color: const Color(0xFFD1D5DB)),
+                                border:
+                                    Border.all(color: const Color(0xFFD1D5DB)),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(Icons.add, color: Color(0xFF1F2937)),
+                              child: const Icon(Icons.add,
+                                  color: Color(0xFF1F2937)),
                             ),
                           ),
                         ],
@@ -1298,7 +1384,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                         children: [
                           Checkbox(
                             value: _urgent,
-                            onChanged: (value) => setState(() => _urgent = value ?? false),
+                            onChanged: (value) =>
+                                setState(() => _urgent = value ?? false),
                             activeColor: color,
                           ),
                           Expanded(
@@ -1341,14 +1428,17 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                       TextField(
                         maxLines: 3,
                         decoration: InputDecoration(
-                          hintText: 'Add any special instructions or details...',
+                          hintText:
+                              'Add any special instructions or details...',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFD1D5DB)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFD1D5DB)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1371,7 +1461,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                           children: [
                             const Row(
                               children: [
-                                Icon(Icons.info, size: 20, color: Color(0xFF3B82F6)),
+                                Icon(Icons.info,
+                                    size: 20, color: Color(0xFF3B82F6)),
                                 SizedBox(width: 8),
                                 Text(
                                   'Contact Information',
@@ -1416,7 +1507,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _activeTab == 'donate' ? _handleSubmitDonation : _handleSubmitRequest,
+                          onPressed: _activeTab == 'donate'
+                              ? _handleSubmitDonation
+                              : _handleSubmitRequest,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: color,
                             foregroundColor: Colors.white,
@@ -1426,7 +1519,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                             ),
                           ),
                           child: Text(
-                            _activeTab == 'donate' ? 'SUBMIT DONATION' : 'SUBMIT REQUEST',
+                            _activeTab == 'donate'
+                                ? 'SUBMIT DONATION'
+                                : 'SUBMIT REQUEST',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -1475,7 +1570,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                         if (widget.onBackPressed != null)
                           IconButton(
                             onPressed: widget.onBackPressed,
-                            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+                            icon: const Icon(Icons.arrow_back,
+                                color: Color(0xFF374151)),
                           ),
                         const SizedBox(width: 8),
                         const Text(
@@ -1495,7 +1591,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
               // Tabs
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
                     _buildTabButton('donate', 'Donate'),
@@ -1521,10 +1618,13 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
+                  border: Border(
+                      top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
                 ),
                 child: Row(
-                  children: bottomNavItems.map((item) => _buildBottomNavItem(item)).toList(),
+                  children: bottomNavItems
+                      .map((item) => _buildBottomNavItem(item))
+                      .toList(),
                 ),
               ),
             ],
@@ -1610,21 +1710,147 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         ),
         const SizedBox(height: 24),
 
-        // Categories Grid
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.1,
-          ),
-          itemCount: _donatableItems.length,
-          itemBuilder: (context, index) {
-            final item = _donatableItems[index];
-            return _buildResourceCard(item, true);
-          },
+        // Items List
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _donatableItems.map((item) {
+            final color = _getDonateCategoryColor(item.category);
+            return Column(
+              children: [
+                Card(
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => _handleDonationSelect(item.id),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Top Row - NEEDED Badge
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.favorite,
+                                        size: 12, color: color),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      'NEEDED',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          // Main Content Row
+                          Row(
+                            children: [
+                              // Left Side - Icon and Text
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: color.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(item.icon,
+                                          size: 20, color: color),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.name,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF1F2937),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            item.description,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFF6B7280),
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Right Side - Pickup and Button
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Pickup within 24hrs',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: color,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      'DONATE',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+            );
+          }).toList(),
         ),
       ],
     );
@@ -1776,7 +2002,7 @@ class MyRequest {
   final String notes;
   final String status;
   final String date;
-  final String type; 
+  final String type;
 
   MyRequest({
     required this.id,

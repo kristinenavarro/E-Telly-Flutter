@@ -383,6 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildQuickAction(QuickAction action) {
     return Card(
+      margin: EdgeInsets.zero,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -400,7 +401,9 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () => _handleFeatureTap(action.id),
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   width: 40,
@@ -411,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Icon(action.icon, size: 20, color: action.color),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(height: 16),
                 Expanded(
                   child: Text(
                     action.title,
@@ -427,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
+    );    
   }
 
   Widget _buildContactItem(EmergencyContact contact) {
@@ -624,13 +627,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 8),
                   GridView.builder(
+                    padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 3,
+                      mainAxisExtent: 74,
                     ),
                     itemCount: _emergencyFeatures.length,
                     itemBuilder: (context, index) {
@@ -654,20 +658,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 8),
                   GridView.builder(
+                    padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 3,
+                      childAspectRatio: 1.8,
                     ),
                     itemCount: _quickActions.length,
                     itemBuilder: (context, index) {
                       return _buildQuickAction(_quickActions[index]);
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   
                   // Emergency Contacts Section - UNCHANGED
                   const Padding(
