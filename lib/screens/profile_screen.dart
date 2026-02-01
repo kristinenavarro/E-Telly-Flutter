@@ -6,11 +6,14 @@ import 'dart:io';
 class ProfileScreen extends StatefulWidget {
   final VoidCallback? onBackPressed;
   final ValueChanged<String>? onTabSelected;
+  final VoidCallback?
+      onNavigateToHome; // ADDED: New callback for home navigation
 
   const ProfileScreen({
     Key? key,
     this.onBackPressed,
     this.onTabSelected,
+    this.onNavigateToHome, // ADDED
   }) : super(key: key);
 
   @override
@@ -28,16 +31,106 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isLoading = true;
   final ImagePicker _picker = ImagePicker();
 
+  // Controllers for text fields
+  late TextEditingController _nameController;
+  late TextEditingController _phoneController;
+  late TextEditingController _regionController;
+  late TextEditingController _provinceController;
+  late TextEditingController _cityController;
+  late TextEditingController _barangayController;
+  late TextEditingController _postalCodeController;
+  late TextEditingController _streetAddressController;
+  late TextEditingController _emergencyNameController;
+  late TextEditingController _emergencyPhoneController;
+  late TextEditingController _emergencyRelationshipController;
+
   // Bottom Navigation Items - SAME AS HOMESCREEN
   final List<Map<String, dynamic>> bottomNavItems = [
-    {'id': 'home', 'label': 'Home', 'icon': Icons.home_outlined, 'iconActive': Icons.home},
-    {'id': 'safety', 'label': 'Safety Tips', 'icon': Icons.security_outlined, 'iconActive': Icons.security},
-    {'id': 'evac', 'label': 'Evac Map', 'icon': Icons.map_outlined, 'iconActive': Icons.map},
-    {'id': 'resources', 'label': 'Resources', 'icon': Icons.inventory_outlined, 'iconActive': Icons.inventory},
-    {'id': 'profile', 'label': 'Profile', 'icon': Icons.person_outline, 'iconActive': Icons.person},
+    {
+      'id': 'home',
+      'label': 'Home',
+      'icon': Icons.home_outlined,
+      'iconActive': Icons.home
+    },
+    {
+      'id': 'safety',
+      'label': 'Safety Tips',
+      'icon': Icons.security_outlined,
+      'iconActive': Icons.security
+    },
+    {
+      'id': 'evac',
+      'label': 'Evac Map',
+      'icon': Icons.map_outlined,
+      'iconActive': Icons.map
+    },
+    {
+      'id': 'resources',
+      'label': 'Resources',
+      'icon': Icons.inventory_outlined,
+      'iconActive': Icons.inventory
+    },
+    {
+      'id': 'profile',
+      'label': 'Profile',
+      'icon': Icons.person_outline,
+      'iconActive': Icons.person
+    },
   ];
 
-  // Navigation methods - SAME AS HOMESCREEN
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+    _loadUserProfile();
+  }
+
+  void _initializeControllers() {
+    _nameController = TextEditingController();
+    _phoneController = TextEditingController();
+    _regionController = TextEditingController();
+    _provinceController = TextEditingController();
+    _cityController = TextEditingController();
+    _barangayController = TextEditingController();
+    _postalCodeController = TextEditingController();
+    _streetAddressController = TextEditingController();
+    _emergencyNameController = TextEditingController();
+    _emergencyPhoneController = TextEditingController();
+    _emergencyRelationshipController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _regionController.dispose();
+    _provinceController.dispose();
+    _cityController.dispose();
+    _barangayController.dispose();
+    _postalCodeController.dispose();
+    _streetAddressController.dispose();
+    _emergencyNameController.dispose();
+    _emergencyPhoneController.dispose();
+    _emergencyRelationshipController.dispose();
+    super.dispose();
+  }
+
+  void _updateControllersFromProfile() {
+    _nameController.text = _editedProfile.fullName ?? '';
+    _phoneController.text = _editedProfile.phoneNumber ?? '';
+    _regionController.text = _editedProfile.region ?? '';
+    _provinceController.text = _editedProfile.province ?? '';
+    _cityController.text = _editedProfile.city ?? '';
+    _barangayController.text = _editedProfile.barangay ?? '';
+    _postalCodeController.text = _editedProfile.postalCode ?? '';
+    _streetAddressController.text = _editedProfile.streetAddress ?? '';
+    _emergencyNameController.text = _editedProfile.emergencyContactName ?? '';
+    _emergencyPhoneController.text = _editedProfile.emergencyContactPhone ?? '';
+    _emergencyRelationshipController.text =
+        _editedProfile.emergencyContactRelationship ?? '';
+  }
+
+  // Navigation methods - UPDATED
   void _navigateToScreen(String routeName) {
     Navigator.pushNamed(context, routeName);
   }
@@ -46,14 +139,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _activeScreen = id;
     });
-    
+
     if (widget.onTabSelected != null) {
       widget.onTabSelected!(id);
     }
-    
+
     switch (id) {
       case 'home':
-        _navigateToScreen('/');
+        _navigateToHome(); // UPDATED: Call dedicated home navigation method
         break;
       case 'safety':
         _navigateToScreen('/safety-tips');
@@ -70,6 +163,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // ADDED: New method to handle home navigation
+  void _navigateToHome() {
+    if (widget.onNavigateToHome != null) {
+      // Use the provided callback if available
+      widget.onNavigateToHome!();
+    } else if (widget.onBackPressed != null) {
+      // Fallback to back navigation
+      widget.onBackPressed!();
+    } else {
+      // Default: navigate to home screen
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
+
   // Bottom Nav Widget - SAME AS HOMESCREEN
   Widget _buildBottomNavItem(Map<String, dynamic> item) {
     bool isActive = _activeScreen == item['id'];
@@ -79,7 +186,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFDC2626).withOpacity(0.1) : Colors.transparent,
+            color: isActive
+                ? const Color(0xFFDC2626).withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(5),
           ),
           child: Column(
@@ -88,7 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Icon(
                 isActive ? item['iconActive'] : item['icon'],
                 size: 20,
-                color: isActive ? const Color(0xFFDC2626) : const Color(0xFF666666),
+                color: isActive
+                    ? const Color(0xFFDC2626)
+                    : const Color(0xFF666666),
               ),
               const SizedBox(height: 2),
               Text(
@@ -96,7 +207,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
-                  color: isActive ? const Color(0xFFDC2626) : const Color(0xFF666666),
+                  color: isActive
+                      ? const Color(0xFFDC2626)
+                      : const Color(0xFF666666),
                 ),
               ),
             ],
@@ -106,19 +219,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserProfile();
-  }
-
   Future<void> _loadUserProfile() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Simulate loading user data from SharedPreferences
       await Future.delayed(const Duration(seconds: 1));
-      
+
       setState(() {
         _profile = UserProfile(
           fullName: prefs.getString('full_name') ?? 'John Doe',
@@ -132,11 +239,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           streetAddress: prefs.getString('street_address'),
           emergencyContactName: prefs.getString('emergency_contact_name'),
           emergencyContactPhone: prefs.getString('emergency_contact_phone'),
-          emergencyContactRelationship: prefs.getString('emergency_contact_relationship'),
+          emergencyContactRelationship:
+              prefs.getString('emergency_contact_relationship'),
           role: 'resident',
         );
-        
+
         _editedProfile = _profile!.copy();
+        _updateControllersFromProfile();
         _isLoading = false;
       });
     } catch (error) {
@@ -153,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         _updateProfileImage(image.path);
       }
@@ -168,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         source: ImageSource.camera,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         _updateProfileImage(image.path);
       }
@@ -197,6 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _isEditing = true;
       _editedProfile = _profile!.copy();
+      _updateControllersFromProfile();
     });
   }
 
@@ -215,7 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Save updated profile to SharedPreferences
       await prefs.setString('full_name', _editedProfile.fullName ?? '');
       await prefs.setString('phone_number', _editedProfile.phoneNumber ?? '');
@@ -224,10 +334,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await prefs.setString('city', _editedProfile.city ?? '');
       await prefs.setString('barangay', _editedProfile.barangay ?? '');
       await prefs.setString('postal_code', _editedProfile.postalCode ?? '');
-      await prefs.setString('street_address', _editedProfile.streetAddress ?? '');
-      await prefs.setString('emergency_contact_name', _editedProfile.emergencyContactName ?? '');
-      await prefs.setString('emergency_contact_phone', _editedProfile.emergencyContactPhone ?? '');
-      await prefs.setString('emergency_contact_relationship', _editedProfile.emergencyContactRelationship ?? '');
+      await prefs.setString(
+          'street_address', _editedProfile.streetAddress ?? '');
+      await prefs.setString(
+          'emergency_contact_name', _editedProfile.emergencyContactName ?? '');
+      await prefs.setString('emergency_contact_phone',
+          _editedProfile.emergencyContactPhone ?? '');
+      await prefs.setString('emergency_contact_relationship',
+          _editedProfile.emergencyContactRelationship ?? '');
 
       setState(() {
         _profile = _editedProfile.copy();
@@ -248,6 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _isEditing = false;
       _editedProfile = _profile!.copy();
+      _updateControllersFromProfile();
     });
   }
 
@@ -268,11 +383,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Clear SharedPreferences and navigate to welcome
               final prefs = await SharedPreferences.getInstance();
               await prefs.clear();
-              
+
               // Navigate to welcome screen
-              if (widget.onTabSelected != null) {
-                widget.onTabSelected!('home');
-              }
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
@@ -301,7 +414,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Color(0xFFDC2626)),
+              leading:
+                  const Icon(Icons.photo_library, color: Color(0xFFDC2626)),
               title: const Text('Choose from Gallery'),
               onTap: () {
                 Navigator.pop(context);
@@ -344,7 +458,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(60),
-                    border: Border.all(color: const Color(0xFFDC2626), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFFDC2626), width: 2),
                   ),
                   child: const Center(
                     child: CircularProgressIndicator(color: Color(0xFFDC2626)),
@@ -356,7 +471,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 120,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(60),
-                    border: Border.all(color: const Color(0xFFDC2626), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFFDC2626), width: 2),
                     image: DecorationImage(
                       image: FileImage(File(_profileImage!)),
                       fit: BoxFit.cover,
@@ -370,11 +486,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(60),
-                    border: Border.all(color: const Color(0xFFDC2626), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFFDC2626), width: 2),
                   ),
                   child: Center(
                     child: Text(
-                      _profile?.fullName?.split(' ').map((n) => n[0]).join('').toUpperCase() ?? 'U',
+                      _profile?.fullName
+                              ?.split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .toUpperCase() ??
+                          'U',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -395,7 +517,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: Colors.white, width: 2),
                     ),
-                    child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                    child: const Icon(Icons.camera_alt,
+                        size: 16, color: Colors.white),
                   ),
                 ),
             ],
@@ -406,20 +529,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             width: 200,
             child: TextField(
-              controller: TextEditingController(text: _editedProfile.fullName),
-              onChanged: (value) => setState(() => _editedProfile.fullName = value),
+              controller: _nameController,
+              onChanged: (value) =>
+                  setState(() => _editedProfile.fullName = value),
+              textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
               ),
-              textAlign: TextAlign.center,
               decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFFDC2626)),
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFFDC2626), width: 1.5),
                 ),
-                contentPadding: const EdgeInsets.all(8),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFFDC2626), width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                ),
+                filled: true,
+                fillColor: Colors.white,
               ),
             ),
           )
@@ -455,45 +592,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildInfoItem({
     required String label,
     required String? value,
-    required String? editedValue,
     required Function(String) onChanged,
     bool multiline = false,
     TextInputType? keyboardType,
+    required TextEditingController controller,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF666666),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 6),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF4B5563),
+              ),
             ),
           ),
-          const SizedBox(height: 4),
           if (_isEditing)
             TextField(
-              controller: TextEditingController(text: editedValue ?? ''),
+              controller: controller,
               onChanged: onChanged,
-              maxLines: multiline ? 2 : 1,
+              maxLines: multiline ? 3 : 1,
               keyboardType: keyboardType,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color(0xFF1F2937),
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFFDC2626)),
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFFDC2626), width: 1.5),
                 ),
-                contentPadding: const EdgeInsets.all(8),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFFDC2626), width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Enter ${label.toLowerCase()}',
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF9CA3AF),
+                ),
               ),
             )
           else
-            Text(
-              value ?? 'Not provided',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF1F2937),
-                fontWeight: FontWeight.w600,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value?.isNotEmpty == true ? value! : 'Not provided',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: value?.isNotEmpty == true
+                            ? const Color(0xFF1F2937)
+                            : const Color(0xFF9CA3AF),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -514,7 +693,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFDC2626).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFDC2626).withOpacity(0.2)),
+                border:
+                    Border.all(color: const Color(0xFFDC2626).withOpacity(0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -622,9 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton(
                 onPressed: () {
                   // Navigate to login
-                  if (widget.onTabSelected != null) {
-                    widget.onTabSelected!('home');
-                  }
+                  Navigator.pushNamed(context, '/');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFDC2626),
@@ -652,16 +830,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: widget.onBackPressed ?? () => Navigator.pop(context),
+                  onPressed:
+                      widget.onBackPressed ?? () => Navigator.pop(context),
                   icon: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
                       color: const Color(0xFFDC2626).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFDC2626).withOpacity(0.2)),
+                      border: Border.all(
+                          color: const Color(0xFFDC2626).withOpacity(0.2)),
                     ),
-                    child: const Icon(Icons.arrow_back, size: 24, color: Color(0xFFDC2626)),
+                    child: const Icon(Icons.arrow_back,
+                        size: 24, color: Color(0xFFDC2626)),
                   ),
                 ),
                 const Expanded(
@@ -725,7 +906,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.person, size: 20, color: Color(0xFFDC2626)),
+                            const Icon(Icons.person,
+                                size: 20, color: Color(0xFFDC2626)),
                             const SizedBox(width: 8),
                             const Text(
                               'Personal Information',
@@ -748,9 +930,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: _buildInfoItem(
                             label: 'Phone Number',
                             value: _profile?.phoneNumber,
-                            editedValue: _editedProfile.phoneNumber,
-                            onChanged: (value) => setState(() => _editedProfile.phoneNumber = value),
+                            onChanged: (value) => setState(
+                                () => _editedProfile.phoneNumber = value),
                             keyboardType: TextInputType.phone,
+                            controller: _phoneController,
                           ),
                         ),
                       ],
@@ -767,7 +950,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.location_on, size: 20, color: Color(0xFFDC2626)),
+                                const Icon(Icons.location_on,
+                                    size: 20, color: Color(0xFFDC2626)),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Address',
@@ -783,9 +967,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               OutlinedButton.icon(
                                 onPressed: () {
                                   // Handle current location
-                                  _showAlert('Info', 'Current location feature would be implemented here');
+                                  _showAlert('Info',
+                                      'Current location feature would be implemented here');
                                 },
-                                icon: const Icon(Icons.navigation, size: 16, color: Color(0xFFDC2626)),
+                                icon: const Icon(Icons.navigation,
+                                    size: 16, color: Color(0xFFDC2626)),
                                 label: const Text(
                                   'Use Current Location',
                                   style: TextStyle(
@@ -795,7 +981,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: const Color(0xFFDC2626).withOpacity(0.2)),
+                                  side: BorderSide(
+                                      color: const Color(0xFFDC2626)
+                                          .withOpacity(0.2)),
                                 ),
                               ),
                           ],
@@ -813,40 +1001,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _buildInfoItem(
                                 label: 'Region',
                                 value: _profile?.region,
-                                editedValue: _editedProfile.region,
-                                onChanged: (value) => setState(() => _editedProfile.region = value),
+                                onChanged: (value) => setState(
+                                    () => _editedProfile.region = value),
+                                controller: _regionController,
                               ),
                               _buildInfoItem(
                                 label: 'Province',
                                 value: _profile?.province,
-                                editedValue: _editedProfile.province,
-                                onChanged: (value) => setState(() => _editedProfile.province = value),
+                                onChanged: (value) => setState(
+                                    () => _editedProfile.province = value),
+                                controller: _provinceController,
                               ),
                               _buildInfoItem(
                                 label: 'City',
                                 value: _profile?.city,
-                                editedValue: _editedProfile.city,
-                                onChanged: (value) => setState(() => _editedProfile.city = value),
+                                onChanged: (value) =>
+                                    setState(() => _editedProfile.city = value),
+                                controller: _cityController,
                               ),
                               _buildInfoItem(
                                 label: 'Barangay',
                                 value: _profile?.barangay,
-                                editedValue: _editedProfile.barangay,
-                                onChanged: (value) => setState(() => _editedProfile.barangay = value),
+                                onChanged: (value) => setState(
+                                    () => _editedProfile.barangay = value),
+                                controller: _barangayController,
                               ),
                               _buildInfoItem(
                                 label: 'Postal Code',
                                 value: _profile?.postalCode,
-                                editedValue: _editedProfile.postalCode,
-                                onChanged: (value) => setState(() => _editedProfile.postalCode = value),
+                                onChanged: (value) => setState(
+                                    () => _editedProfile.postalCode = value),
                                 keyboardType: TextInputType.number,
+                                controller: _postalCodeController,
                               ),
                               _buildInfoItem(
                                 label: 'Street Address',
                                 value: _profile?.streetAddress,
-                                editedValue: _editedProfile.streetAddress,
-                                onChanged: (value) => setState(() => _editedProfile.streetAddress = value),
+                                onChanged: (value) => setState(
+                                    () => _editedProfile.streetAddress = value),
                                 multiline: true,
+                                controller: _streetAddressController,
                               ),
                             ],
                           ),
@@ -865,7 +1059,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.medical_services, size: 20, color: Color(0xFFDC2626)),
+                                const Icon(Icons.medical_services,
+                                    size: 20, color: Color(0xFFDC2626)),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Emergency Contact',
@@ -878,8 +1073,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             IconButton(
-                              onPressed: () => setState(() => _showEmergencyModal = true),
-                              icon: const Icon(Icons.info, size: 20, color: Color(0xFFDC2626)),
+                              onPressed: () =>
+                                  setState(() => _showEmergencyModal = true),
+                              icon: const Icon(Icons.info,
+                                  size: 20, color: Color(0xFFDC2626)),
                             ),
                           ],
                         ),
@@ -896,21 +1093,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _buildInfoItem(
                                 label: 'Name',
                                 value: _profile?.emergencyContactName,
-                                editedValue: _editedProfile.emergencyContactName,
-                                onChanged: (value) => setState(() => _editedProfile.emergencyContactName = value),
+                                onChanged: (value) => setState(() =>
+                                    _editedProfile.emergencyContactName =
+                                        value),
+                                controller: _emergencyNameController,
                               ),
                               _buildInfoItem(
                                 label: 'Phone',
                                 value: _profile?.emergencyContactPhone,
-                                editedValue: _editedProfile.emergencyContactPhone,
-                                onChanged: (value) => setState(() => _editedProfile.emergencyContactPhone = value),
+                                onChanged: (value) => setState(() =>
+                                    _editedProfile.emergencyContactPhone =
+                                        value),
                                 keyboardType: TextInputType.phone,
+                                controller: _emergencyPhoneController,
                               ),
                               _buildInfoItem(
                                 label: 'Relationship',
                                 value: _profile?.emergencyContactRelationship,
-                                editedValue: _editedProfile.emergencyContactRelationship,
-                                onChanged: (value) => setState(() => _editedProfile.emergencyContactRelationship = value),
+                                onChanged: (value) => setState(() =>
+                                    _editedProfile
+                                        .emergencyContactRelationship = value),
+                                controller: _emergencyRelationshipController,
                               ),
                             ],
                           ),
@@ -925,7 +1128,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: _handleCancel,
-                            icon: const Icon(Icons.close, size: 20, color: Color(0xFF1F2937)),
+                            icon: const Icon(Icons.close,
+                                size: 20, color: Color(0xFF1F2937)),
                             label: const Text(
                               'Cancel',
                               style: TextStyle(
@@ -947,7 +1151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: _handleLogout,
-                          icon: const Icon(Icons.logout, size: 20, color: Color(0xFFDC2626)),
+                          icon: const Icon(Icons.logout,
+                              size: 20, color: Color(0xFFDC2626)),
                           label: const Text(
                             'Log Out',
                             style: TextStyle(
@@ -961,7 +1166,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            side: BorderSide(color: const Color(0xFFDC2626).withOpacity(0.3)),
+                            side: BorderSide(
+                                color:
+                                    const Color(0xFFDC2626).withOpacity(0.3)),
                           ),
                         ),
                       ),
@@ -977,10 +1184,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
+              border:
+                  Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
             ),
             child: Row(
-              children: bottomNavItems.map((item) => _buildBottomNavItem(item)).toList(),
+              children: bottomNavItems
+                  .map((item) => _buildBottomNavItem(item))
+                  .toList(),
             ),
           ),
         ],
